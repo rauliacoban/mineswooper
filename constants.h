@@ -8,7 +8,8 @@
 #define EXPLODE '!'
 #define MINE 'X'
 #define EMPTY ' '
-const std::pair<int, int> directions[] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, 
+const std::pair<int, int> DIRECTION[] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, 
                                             {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+const std::pair<int, int> INVALID_PAIR = {-1, -1};
 
 #endif
