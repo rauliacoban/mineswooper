@@ -3,6 +3,7 @@
 
 #include <utility>
 
+#define INVALID -1
 #define UNDEFINED '?'
 #define FOG '#'
 #define EXPLODE '!'
