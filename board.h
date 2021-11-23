@@ -16,6 +16,7 @@ protected:
 public:
     Board(size_t N, size_t M);
     void printDebug();
+    void print();
     
 private:
     int goDirection(int id, int dir);

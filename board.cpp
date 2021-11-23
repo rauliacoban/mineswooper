@@ -15,10 +15,22 @@ Board<CellType>::Board(size_t N, size_t M):
     
     for(int i = 0; i < size; i++)
     {
-        Cell *cell = (Cell*) board + i;
+        CellType *cell = board + i;
         cell->id = i;
-        cell->symbol = UNDEFINED;
         buildNeighbors(i);
+    }
+}
+
+template<class CellType> 
+void Board<CellType>::print()
+{
+    for(int i = 0; i < N; i++)
+    {
+        for(int j = 0; j < M; j++)
+        {
+            std::cout << board[getId(i, j)].getSymbol();
+        }
+        std::cout << "\n";
     }
 }
 
@@ -54,8 +66,7 @@ int Board<CellType>::goDirection(int id, int dir)
 template<class CellType> 
 void Board<CellType>::buildNeighbors(int id)
 {
-    size_t dir_size = sizeof(DIRECTION) / sizeof(DIRECTION[0]);
-    for(int dir  = 0; dir < dir_size; dir++)
+    for(int dir  = 0; dir < DIRECTION_SIZE; dir++)
     {
         int neighbor = goDirection(id, dir);
         if(isValid(neighbor))
@@ -64,3 +75,5 @@ void Board<CellType>::buildNeighbors(int id)
 }
 
 template class Board<Cell>;
+template class Board<PlayerCell>;
+template class Board<GameCell>;
