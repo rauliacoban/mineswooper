@@ -2,6 +2,8 @@
 #define BOARD_H
 
 #include "cell.h"
+#include "playercell.h"
+#include "gamecell.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -15,7 +17,6 @@ public:
     Board(size_t N, size_t M);
     void printDebug();
     
-
 private:
     int goDirection(int id, int dir);
     void buildNeighbors(int id);
