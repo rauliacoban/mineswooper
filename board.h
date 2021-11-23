@@ -10,9 +10,11 @@ template<class CellType> class Board
 protected:
     size_t N, M, size;
     CellType *board;
-    
+
 public:
     Board(size_t N, size_t M);
+    void printDebug();
+    
 
 private:
     int goDirection(int id, int dir);

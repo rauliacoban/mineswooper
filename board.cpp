@@ -6,7 +6,6 @@ Board<CellType>::Board(size_t N, size_t M):
     M(M)
 {
     size = N * M;
-    std::cout << sizeof(CellType) << "\n";
     board = (CellType*) calloc(size, sizeof(CellType));
     if(board == NULL)
     {
@@ -14,12 +13,28 @@ Board<CellType>::Board(size_t N, size_t M):
         exit(1);
     }
     
-    for(int i = 0; i < size; i++)// NEEDS TESTING!
+    for(int i = 0; i < size; i++)
     {
         Cell *cell = (Cell*) board + i;
         cell->id = i;
         cell->symbol = UNDEFINED;
         buildNeighbors(i);
+    }
+}
+
+template<class CellType> 
+void Board<CellType>::printDebug()
+{
+    for(int i = 0; i < size; i++)
+    {
+        Cell *cell = board + i;
+        std::cout << "(" << getCoords(i).first << ", " << getCoords(i).second << "):   ";
+        for(int j = 0; j < cell->neighbors.size(); j++)
+        {
+            Cell *neighbor = cell->neighbors[j];
+            std::cout << "(" << getCoords(neighbor->id).first << ", " << getCoords(neighbor->id).second << ")";
+        }
+        std::cout << "\n";
     }
 }
 
@@ -47,3 +62,5 @@ void Board<CellType>::buildNeighbors(int id)
             board[id].neighbors.push_back(board + neighbor);
     }
 }
+
+template class Board<Cell>;
