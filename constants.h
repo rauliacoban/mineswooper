@@ -2,6 +2,7 @@
 #define CONSTANTS_H
 
 #include <utility>
+#include <iostream> //debugging purposes
 
 #define INVALID -1
 #define UNDEFINED '?'
