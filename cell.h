@@ -18,14 +18,21 @@ public:
         return 0;
     }
 
-    char getSymbol()
+    bool isEmpty()
     {
-        if(isMine())
+        if(val == EMPTY)
+            return 1;
+        return 0; 
+    }
+
+    static char getSymbol(Cell* cell)
+    {
+        if(cell->isMine())
             return MINE;
-        if(val == 0)
+        if(cell->isEmpty())
             return EMPTY;
-        if(val > 0 && val < DIRECTION_SIZE)
-            return '0' + val;
+        if(cell->val > 0 && cell->val < DIRECTION_SIZE)
+            return '0' + cell->val;
         return UNDEFINED;
     }
 };

@@ -22,13 +22,13 @@ Board<CellType>::Board(size_t N, size_t M):
 }
 
 template<class CellType> 
-void Board<CellType>::print()
+void Board<CellType>::print(char(*symbol)(Cell*))
 {
     for(int i = 0; i < N; i++)
     {
         for(int j = 0; j < M; j++)
         {
-            std::cout << board[getId(i, j)].getSymbol();
+            std::cout << symbol(board + getId(i, j));
         }
         std::cout << "\n";
     }

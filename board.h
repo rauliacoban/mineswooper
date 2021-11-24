@@ -16,7 +16,7 @@ protected:
 public:
     Board(size_t N, size_t M);
     void printDebug();
-    void print();
+    void print(char(*symbol)(Cell*));
     
 private:
     int goDirection(int id, int dir);
