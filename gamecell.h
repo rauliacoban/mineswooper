@@ -13,6 +13,11 @@ public:
     {
         return cover;
     }
+    
+    void setCover(bool state)
+    {
+        cover = state;
+    }
 
     static char symbolWithCover(Cell* cell_)
     {
