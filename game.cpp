@@ -5,6 +5,8 @@ Game::Game(size_t N, size_t M, size_t n_bombs, int seed):
     n_bombs(n_bombs),
     seed(seed)
 {
+    for(int i = 0; i < size; i++)
+        board[i].setCover(1);
     populate();
 }
 
