@@ -20,7 +20,7 @@ public:
 
     bool isEmpty()
     {
-        if(val == EMPTY)
+        if(val == 0)
             return 1;
         return 0; 
     }
