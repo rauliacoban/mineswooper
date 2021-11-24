@@ -13,6 +13,15 @@ public:
     {
         return cover;
     }
+
+    static char symbolWithCover(Cell* cell_)
+    {
+        GameCell *cell = (GameCell*) cell_;
+
+        if(cell->isCovered())
+            return FOG;
+        return getSymbol(cell);
+    }
 };
 
 #endif
