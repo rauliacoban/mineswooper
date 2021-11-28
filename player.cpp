@@ -19,8 +19,19 @@ void Player::getInfo(Solution info)
     for(auto it = cell->neighbors.begin(); it != cell->neighbors.end(); it++)
     {
         PlayerCell *nbr = (PlayerCell*)*it;
-        if(nbr->unknownNeighbors() == 0)
+        if(nbr->neighborsType(UNKNOWN) == 0)
             work.remove(nbr);
+
+        if(cell->isMine())
+        {
+            if(nbr->isFree())
+                nbr->val--;
+        }
+        else
+        {
+            if(nbr->isMine())
+                cell->val--;
+        }
     }
 }
 
@@ -30,7 +41,7 @@ Solution Player::getSol()
     for(auto it = work.begin(); it != work.end(); it++)
     {
         PlayerCell *cell = *it;
-        std::cout << cell->id << " ";
+        std::cout << "(" << getCoords(cell->id).first << ", " << getCoords(cell->id).second << ") ";
     }
     std::cout << "\n";
 
@@ -43,7 +54,7 @@ Solution Player::solveTrivial()
     {
         
         PlayerCell *cell = *it;
-        if(cell->unknownNeighbors() == cell->val)
+        if(cell->neighborsType(UNKNOWN) == cell->val)
         {
             for(auto i = cell->neighbors.begin(); i != cell->neighbors.end(); i++)
             {

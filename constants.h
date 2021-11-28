@@ -13,8 +13,8 @@
 #define EXPLODE_C '!'
 #define FLAG_C 'X'
 #define EMPTY_C ' '
-const std::pair<int, int> DIRECTION[] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, 
-                                            {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+const std::pair<int, int> DIRECTION[] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, 
+                                            {1, 1}, {1, 0}, {1, -1}, {0, -1}};
 const size_t DIRECTION_SIZE = sizeof(DIRECTION) / sizeof(DIRECTION[0]);
 const std::pair<int, int> INVALID_PAIR = {INVALID, INVALID};
 

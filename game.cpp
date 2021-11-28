@@ -65,6 +65,11 @@ Solution Game::evaluate(Solution sol)
 
 void Game::gameOver(Solution sol)
 {
-    std::cout << "MISTAKE at cell(" << getCoords(sol.id).first << ", " << getCoords(sol.id).second << ")\n";
+    std::cout << "MISTAKE at cell(" << getCoords(sol.id).first << ", " << getCoords(sol.id).second << ")";
+    if(sol.val == MINE)
+        std::cout << " Expected FREE\n";
+    else
+        std::cout << " Expected MINE\n";
+    print(GameCell::symbolWithCover);
     exit(0);
 }

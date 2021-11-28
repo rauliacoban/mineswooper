@@ -5,11 +5,16 @@
 
 int main()
 {
-    Game game(4, 7, 5, 777);
+    const size_t N = 15;
+    const size_t M = 31;
+    const size_t MINES = 99;
+    const size_t SEED = 675;
+
+    Game game(N, M, MINES, SEED);
     //game.print(GameCell::symbolWithCover);
     //board.printDebug();
 
-    Player player(4, 7);
+    Player player(N, M);
     
 
 
@@ -20,7 +25,8 @@ int main()
         std::cout << x.id << " " << (int)x.val << "\n";
         x = game.evaluate(x);
         player.getInfo(x);
-        player.print(Cell::getSymbol);
+        //player.print(Cell::getSymbol);
+        game.print(GameCell::symbolWithCover);
         x = player.getSol();
     }
     
