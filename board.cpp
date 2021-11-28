@@ -24,14 +24,22 @@ Board<CellType>::Board(size_t N, size_t M):
 template<class CellType> 
 void Board<CellType>::print(char(*symbol)(Cell*))
 {
+    for(int i = 0; i < M+2; i++)
+        std::cout << "-";
+    std::cout << "\n";
     for(int i = 0; i < N; i++)
     {
+        std::cout << "|";
         for(int j = 0; j < M; j++)
         {
             std::cout << symbol(board + getId(i, j));
         }
+        std::cout << "|";
         std::cout << "\n";
     }
+    for(int i = 0; i < M+2; i++)
+        std::cout << "-";
+    std::cout << "\n";
 }
 
 template<class CellType> 
