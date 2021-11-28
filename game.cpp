@@ -18,7 +18,6 @@ void Game::populate()
     while(count)
     {
         int idx = rand() % size;
-        std::cout << idx << "\n";
         GameCell *cell = board + idx;
         if(!cell->isMine())
         {
@@ -35,3 +34,12 @@ void Game::populate()
     }   
 }
 
+int Game::getStart()
+{
+    while(true)
+    {
+        int id = rand() % size;
+        if(board[id].isEmpty())
+            return id;
+    }
+}
