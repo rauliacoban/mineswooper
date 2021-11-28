@@ -6,6 +6,8 @@
 
 #define INVALID -16
 #define MINE -32
+#define UNKNOWN -24
+#define FREE -8
 #define UNDEFINED_C '?'
 #define FOG_C '#'
 #define EXPLODE_C '!'

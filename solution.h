@@ -12,9 +12,19 @@ public:
         val(val)
     {}
 
-    static Solution makeSol(int id, char val)
+    Solution(int id):
+        id(id),
+        val(INVALID)
+    {}
+
+    Solution():
+        id(INVALID),
+        val(INVALID)
+    {}
+
+    bool isValid()
     {
-        return Solution(id, val);
+        return id != INVALID;
     }
 };
 

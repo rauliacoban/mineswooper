@@ -11,11 +11,12 @@ class Player: public Board<PlayerCell>
 private:
     std::list<PlayerCell*> work;
 public:
-    Player(size_t N, size_t M, int start);
+    Player(size_t N, size_t M);
     Solution getSol();
     void getInfo(Solution info);
 
 private:
+    Solution solveTrivial();
 };
 
 

@@ -43,3 +43,28 @@ int Game::getStart()
             return id;
     }
 }
+
+Solution Game::evaluate(Solution sol)
+{
+    GameCell *cell = board + sol.id;
+    cell->setCover(0);
+
+    if(cell->isMine())
+    {
+        if(sol.val != MINE)
+            gameOver(sol);
+    }
+    else
+    {
+        if(sol.val != FREE)
+            gameOver(sol);
+    }
+
+    return Solution(sol.id, cell->val);
+}
+
+void Game::gameOver(Solution sol)
+{
+    std::cout << "MISTAKE at cell(" << getCoords(sol.id).first << ", " << getCoords(sol.id).second << ")\n";
+    exit(0);
+}
