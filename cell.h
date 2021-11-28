@@ -28,12 +28,20 @@ public:
     static char getSymbol(Cell* cell)
     {
         if(cell->isMine())
-            return MINE;
+            return FLAG_C;
         if(cell->isEmpty())
-            return EMPTY;
+            return EMPTY_C;
         if(cell->val > 0 && cell->val < DIRECTION_SIZE)
             return '0' + cell->val;
-        return UNDEFINED;
+        return UNDEFINED_C;
+    }
+
+    bool isValid()
+    {
+        char res = Cell::getSymbol(this);
+        if(res == UNDEFINED_C)
+            return 0;
+        return 1;
     }
 };
 

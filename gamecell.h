@@ -24,7 +24,7 @@ public:
         GameCell *cell = (GameCell*) cell_;
 
         if(cell->isCovered())
-            return FOG;
+            return FOG_C;
         return getSymbol(cell);
     }
 };
