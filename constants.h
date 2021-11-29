@@ -6,8 +6,9 @@
 
 #define INVALID -16
 #define MINE -32
-#define UNKNOWN -24
-#define FREE -8
+#define UNKNOWN -24 // uncovered for player
+#define FREE -8 // 0 -> DIRECTION_SIZE
+#define ACTIVE -40 // 1 -> DIRECTION_SIZE
 #define UNDEFINED_C '?'
 #define FOG_C '#'
 #define EXPLODE_C '!'
