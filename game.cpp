@@ -18,7 +18,7 @@ void Game::populate()
     while(count)
     {
         int idx = rand() % size;
-        GameCell *cell = board + idx;
+        GameCell *cell = &board[idx];
         if(!cell->isMine())
         {
             cell->val = MINE;
@@ -46,7 +46,7 @@ int Game::getStart()
 
 Solution Game::evaluate(Solution sol)
 {
-    GameCell *cell = board + sol.id;
+    GameCell *cell = &board[sol.id];
     cell->setCover(0);
 
     if(cell->isMine())

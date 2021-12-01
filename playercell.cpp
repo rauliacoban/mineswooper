@@ -1,24 +1,154 @@
 #include "playercell.h"
+#include <map>
 
-bool PlayerCell::isUnknown()
+std::list<PlayerCell::Influence> PlayerCell::getCommonInfluence()
 {
-    if(val == UNKNOWN)
-        return 1;
-    return 0;
+    std::list<Influence> inf;
+    for(auto it = neighbors.begin(); it != neighbors.end(); it++)
+    {
+        PlayerCell *nbr = (PlayerCell*) *it;
+
+        if(nbr->isUnknown())
+        {
+            for(auto i = nbr->partial.begin(); i != nbr->partial.end(); i++)
+            {
+                PlayerCell *src = (PlayerCell*) *i;
+                if(src == this)
+                    continue;
+
+                bool is_in = 0;
+                for(auto j = inf.begin(); j != inf.end() && !is_in; j++)
+                {
+                    Influence *elem = &*j;
+                    if(elem->origin == src)
+                    {
+                        elem->target.push_back(nbr);
+                        is_in = 1;
+                    }
+                }
+                if(!is_in)
+                {
+                    inf.push_back(Influence(src, nbr));
+                }
+            }
+        }
+    }
+
+    return inf;
 }
 
-bool PlayerCell::isFree()
+std::list<PlayerCell::Influence> PlayerCell::getCommonMines()
 {
-    if(val >= 0 && val <= DIRECTION_SIZE)
-        return 1;
-    return 0;
+    std::list<Influence> inf = getCommonInfluence();
+    std::list<Influence> sol;
+    for(auto it = inf.begin(); it != inf.end(); it++)
+    {
+        Influence *elem = &*it;
+        if(elem->target.size() == elem->origin->partial.size())
+        {
+            sol.push_back(*elem);
+        }
+    }
+
+    return sol;
 }
 
-bool PlayerCell::isActive()
+int PlayerCell::permutation(std::list<PlayerCell::Influence> *influence, int *step_ret)
 {
-    if(val > 0 && val <= DIRECTION_SIZE)
-        return 1;
-    return 0;
+    int step = *step_ret;
+    int pow = 2;
+    for(auto it = influence->begin(); it != influence->end(); it++, pow*=2)
+    {
+        PlayerCell::Influence *inf = &(*it);
+        if(step % pow)
+            inf->used = 1;
+        else
+            inf->used = 0;
+        step -= step % pow;
+    }
+
+    if(step == pow / 2)
+        return 0;
+    (*step_ret)++;
+    return 1;
+}
+
+bool PlayerCell::checkPermutation(std::list<PlayerCell::Influence> *influence, std::map<PlayerCell*, bool> *occupied, int *occupied_val)
+{
+    for(auto it = influence->begin(); it != influence->end(); it++)
+    {
+        PlayerCell::Influence *inf = &(*it);
+        if(inf->used)
+        {
+            *occupied_val += inf->origin->weight;
+            for(auto i = inf->target.begin(); i != inf->target.end(); i++)
+            {
+                PlayerCell *cell = *i;
+                if(occupied->count(cell))
+                    return 0;
+                else
+                    occupied->emplace(cell, 1);
+            }
+        }
+    }
+
+    return 1;
+}
+
+bool PlayerCell::applyPermutation(std::list<Influence> *inf, int *occ_max)
+{
+    std::map<PlayerCell*, bool> occupied;
+    int occupied_val = 0;
+    if(!checkPermutation(inf, &occupied, &occupied_val))
+        return 0;
+    
+    if(occupied_val <= *occ_max)
+        return 0;
+    
+    *occ_max = occupied_val;
+    weight = val - occupied_val;
+    partial.clear();
+    
+    for(auto it = neighbors.begin(); it != neighbors.end(); it++)
+    {
+        PlayerCell *nbr = (PlayerCell*) *it;
+        
+        //if(nbr->isUnknown())
+            //std::cout << "found " << nbr->id << " ? " << occupied.count(nbr) << "\n";
+        if(nbr->isUnknown() && !occupied.count(nbr))
+        {
+            bool is_in = std::find(nbr->partial.begin(), nbr->partial.end(), this) != nbr->partial.end();
+            if(!is_in)
+                nbr->partial.push_back(this);
+
+            is_in = std::find(partial.begin(), partial.end(), this) != partial.end();
+            if(!is_in)
+            {
+                //std::cout <<"pushed "<< nbr->id << "\n";
+                partial.push_back(nbr);
+            }
+        }
+        if(nbr->isActive())
+        {
+            nbr->partial.remove(this);
+        }
+    }
+
+    return 1;
+}
+
+void PlayerCell::setPartial()
+{
+    //std::cout << "     WORKING ON " << id << "\n";
+    std::list<PlayerCell::Influence> inf = getCommonMines();
+    int occ_max = -1;
+
+    int step = 0;
+    while(permutation(&inf, &step))
+    {
+        applyPermutation(&inf, &occ_max);
+    }
+    
 }
 
 int PlayerCell::neighborsType(char type)

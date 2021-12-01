@@ -6,17 +6,11 @@ Board<CellType>::Board(size_t N, size_t M):
     M(M)
 {
     size = N * M;
-    board = (CellType*) calloc(size, sizeof(CellType));
-    if(board == NULL)
-    {
-        std::cout << "ERROR while allocating memory. Exiting.\n";
-        exit(1);
-    }
+    board.resize(N * M);
     
     for(int i = 0; i < size; i++)
     {
-        CellType *cell = board + i;
-        cell->id = i;
+        board[i].id = i;
         buildNeighbors(i);
     }
 }
@@ -32,7 +26,7 @@ void Board<CellType>::print(char(*symbol)(Cell*))
         std::cout << "|";
         for(int j = 0; j < M; j++)
         {
-            std::cout << symbol(board + getId(i, j));
+            std::cout << symbol(&board[getId(i, j)]);
         }
         std::cout << "|";
         std::cout << "\n";
@@ -47,7 +41,7 @@ void Board<CellType>::printDebug()
 {
     for(int i = 0; i < size; i++)
     {
-        Cell *cell = board + i;
+        Cell *cell = &board[i];
         std::cout << "(" << getCoords(i).first << ", " << getCoords(i).second << "):   ";
         for(int j = 0; j < cell->neighbors.size(); j++)
         {
@@ -56,6 +50,12 @@ void Board<CellType>::printDebug()
         }
         std::cout << "\n";
     }
+}
+
+template<class CellType> 
+void Board<CellType>::printCoords(Cell *cell)
+{
+    std::cout << "(" << getCoords(cell->id).first << ", " << getCoords(cell->id).second << ") ";
 }
 
 template<class CellType> 
@@ -76,9 +76,9 @@ void Board<CellType>::buildNeighbors(int id)
 {
     for(int dir  = 0; dir < DIRECTION_SIZE; dir++)
     {
-        int neighbor = goDirection(id, dir);
-        if(isValid(neighbor))
-            board[id].neighbors.push_back(board + neighbor);
+        int nbr = goDirection(id, dir);
+        if(isValid(nbr))
+            board[id].neighbors.push_back(&board[nbr]);
     }
 }
 

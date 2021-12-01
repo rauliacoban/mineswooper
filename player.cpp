@@ -9,8 +9,9 @@ Player::Player(size_t N, size_t M):
 
 void Player::getInfo(Solution info)
 {
-    PlayerCell *cell = board + info.id;
+    PlayerCell *cell = &board[info.id];
     cell->val = info.val;
+    cell->weight = cell->val;
     if(!cell->isMine())
     {
         work.push_back(cell);
@@ -33,49 +34,80 @@ void Player::getInfo(Solution info)
                 cell->val--;
         }
     }
+
+    cell->setPartial();
 }
 
 Solution Player::getSol()
-{
+{/*
     std::cout << "work: ";
     for(auto it = work.begin(); it != work.end(); it++)
     {
         PlayerCell *cell = *it;
         std::cout << "(" << getCoords(cell->id).first << ", " << getCoords(cell->id).second << ") ";
     }
-    std::cout << "\n";
+    std::cout << "\n";*/
 
-    return solveTrivial();
+    Solution sol;
+    sol = solve(solveTrivial);
+    if(sol.isValid())
+        return sol;
+
+    sol = solve(solvePartial);
+    if(sol.isValid())
+        return sol;
+
+    return Solution(INVALID);
 }
 
-Solution Player::solveTrivial()
+Solution Player::solve(Solution(Player::*algorithm)(PlayerCell*))
 {
     for(auto it = work.begin(); it != work.end(); it++)
     {
+        PlayerCell *cell = (PlayerCell*) *it;
+        Solution sol = (this->*algorithm)(cell);
         
-        PlayerCell *cell = *it;
-        if(cell->neighborsType(UNKNOWN) == cell->val)
+        if(sol.isValid())
+            return sol;
+    }
+
+    return Solution(INVALID);
+}
+
+Solution Player::solveTrivial(PlayerCell *cell)
+{
+    if(cell->neighborsType(UNKNOWN) == cell->val)
+    {
+        for(auto i = cell->neighbors.begin(); i != cell->neighbors.end(); i++)
         {
-            for(auto i = cell->neighbors.begin(); i != cell->neighbors.end(); i++)
+            PlayerCell *nbr = (PlayerCell*)*i;
+            if(nbr->isUnknown())
             {
-                PlayerCell *nbr = (PlayerCell*)*i;
-                if(nbr->isUnknown())
-                {
-                    return Solution(nbr->id, MINE);
-                }
+                return Solution(nbr->id, MINE);
             }
         }
-        if(cell->isEmpty())
+    }
+    if(cell->isEmpty())
+    {
+        for(auto i = cell->neighbors.begin(); i != cell->neighbors.end(); i++)
         {
-            for(auto i = cell->neighbors.begin(); i != cell->neighbors.end(); i++)
+            PlayerCell *nbr = (PlayerCell*)*i;
+            if(nbr->isUnknown())
             {
-                PlayerCell *nbr = (PlayerCell*)*i;
-                if(nbr->isUnknown())
-                {
-                    return Solution(nbr->id, FREE);
-                }
+                return Solution(nbr->id, FREE);
             }
-        } 
+        }
+    } 
+    return Solution(INVALID);
+}
+
+Solution Player::solvePartial(PlayerCell *cell)
+{
+    cell->setPartial();
+    if(cell->weight == 0)
+    {
+        if(!cell->partial.empty())
+            return Solution((*(cell->partial.begin()))->id, FREE);
     }
 
     return Solution(INVALID);

@@ -5,6 +5,7 @@
 #include "playercell.h"
 #include "solution.h"
 #include <list>
+#include "influence.h"
 
 class Player: public Board<PlayerCell>
 {
@@ -15,8 +16,11 @@ public:
     Solution getSol();
     void getInfo(Solution info);
 
-private:
-    Solution solveTrivial();
+public:
+    Solution solve(Solution(Player::*algorithm)(PlayerCell*));
+    Solution solveTrivial(PlayerCell *cell);
+
+    Solution solvePartial(PlayerCell *cell);
 };
 
 

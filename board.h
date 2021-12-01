@@ -4,19 +4,20 @@
 #include "cell.h"
 #include "playercell.h"
 #include "gamecell.h"
-#include <cstdlib>
+#include <vector>
 #include <iostream>
 
 template<class CellType> class Board
 {
-protected:
+public:
     size_t N, M, size;
-    CellType *board;
+    std::vector<CellType> board;
 
 public:
     Board(size_t N, size_t M);
     void printDebug();
     void print(char(*symbol)(Cell*));
+    void printCoords(Cell *cell);
     
 private:
     int goDirection(int id, int dir);
