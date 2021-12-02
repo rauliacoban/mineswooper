@@ -17,6 +17,9 @@ void Player::getInfo(Solution info)
         work.push_back(cell);
     }
 
+    if(cell->neighborsType(UNKNOWN) == 0)
+        work.remove(cell);
+
     for(auto it = cell->neighbors.begin(); it != cell->neighbors.end(); it++)
     {
         PlayerCell *nbr = (PlayerCell*)*it;
@@ -104,11 +107,14 @@ Solution Player::solveTrivial(PlayerCell *cell)
 Solution Player::solvePartial(PlayerCell *cell)
 {
     cell->setPartial();
-    if(cell->weight == 0)
+    if(!cell->partial.empty())
     {
-        if(!cell->partial.empty())
+        if(cell->weight == 0)
             return Solution((*(cell->partial.begin()))->id, FREE);
+        if(cell->weight == cell->partial.size())
+            return Solution((*(cell->partial.begin()))->id, MINE);
     }
+    
 
     return Solution(INVALID);
 }
