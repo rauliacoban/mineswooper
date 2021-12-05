@@ -3,38 +3,35 @@
 
 std::list<PlayerCell::Influence> PlayerCell::getCommonInfluence()
 {
-    std::list<Influence> inf;
+    std::list<Influence> influence;
     for(auto it = neighbors.begin(); it != neighbors.end(); it++)
     {
         PlayerCell *nbr = (PlayerCell*) *it;
-
-        if(nbr->isUnknown())
+        if(!nbr->isUnknown()) 
+            continue;
+        
+        for(auto i = nbr->partial.begin(); i != nbr->partial.end(); i++)
         {
-            for(auto i = nbr->partial.begin(); i != nbr->partial.end(); i++)
-            {
-                PlayerCell *src = (PlayerCell*) *i;
-                if(src == this)
-                    continue;
+            PlayerCell *src = *i;
+            if(src == this || !src->isFree())
+                continue;
 
-                bool is_in = 0;
-                for(auto j = inf.begin(); j != inf.end() && !is_in; j++)
+            bool is_in = 0;
+            for(auto j = influence.begin(); j != influence.end() && !is_in; j++)
+            {
+                Influence *inf = &*j;
+                if(inf->origin == src)
                 {
-                    Influence *elem = &*j;
-                    if(elem->origin == src)
-                    {
-                        elem->target.push_back(nbr);
-                        is_in = 1;
-                    }
-                }
-                if(!is_in)
-                {
-                    inf.push_back(Influence(src, nbr));
+                    inf->target.push_back(nbr);
+                    is_in = 1;
                 }
             }
+            if(!is_in)
+                influence.push_back(Influence(src, nbr));
         }
     }
 
-    return inf;
+    return influence;
 }
 
 std::list<PlayerCell::Influence> PlayerCell::getCommonMines()
@@ -107,14 +104,18 @@ bool PlayerCell::applyPermutation(std::list<Influence> *inf, int *occ_max)
     
     *occ_max = occupied_val;
     weight = val - occupied_val;
+
+    for(auto it = partial.begin(); it != partial.end(); it++)
+    {
+        PlayerCell *nbr = *it;
+        nbr->partial.remove(this);
+    }
     partial.clear();
     
     for(auto it = neighbors.begin(); it != neighbors.end(); it++)
     {
         PlayerCell *nbr = (PlayerCell*) *it;
         
-        //if(nbr->isUnknown())
-            //std::cout << "found " << nbr->id << " ? " << occupied.count(nbr) << "\n";
         if(nbr->isUnknown() && !occupied.count(nbr))
         {
             bool is_in = std::find(nbr->partial.begin(), nbr->partial.end(), this) != nbr->partial.end();
@@ -124,7 +125,6 @@ bool PlayerCell::applyPermutation(std::list<Influence> *inf, int *occ_max)
             is_in = std::find(partial.begin(), partial.end(), this) != partial.end();
             if(!is_in)
             {
-                //std::cout <<"pushed "<< nbr->id << "\n";
                 partial.push_back(nbr);
             }
         }
@@ -139,10 +139,12 @@ bool PlayerCell::applyPermutation(std::list<Influence> *inf, int *occ_max)
 
 void PlayerCell::setPartial()
 {
-    //std::cout << "     WORKING ON " << id << "\n";
+    if(!isFree())
+        return;
     std::list<PlayerCell::Influence> inf = getCommonMines();
-    int occ_max = -1;
 
+    weight = val;
+    int occ_max = -1;
     int step = 0;
     while(permutation(&inf, &step))
     {

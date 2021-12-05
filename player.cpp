@@ -11,14 +11,6 @@ void Player::getInfo(Solution info)
 {
     PlayerCell *cell = &board[info.id];
     cell->val = info.val;
-    cell->weight = cell->val;
-    if(!cell->isMine())
-    {
-        work.push_back(cell);
-    }
-
-    if(cell->neighborsType(UNKNOWN) == 0)
-        work.remove(cell);
 
     for(auto it = cell->neighbors.begin(); it != cell->neighbors.end(); it++)
     {
@@ -30,6 +22,8 @@ void Player::getInfo(Solution info)
         {
             if(nbr->isFree())
                 nbr->val--;
+            if(nbr->isUnknown())
+                nbr->partial.remove(cell);
         }
         else
         {
@@ -38,19 +32,23 @@ void Player::getInfo(Solution info)
         }
     }
 
-    cell->setPartial();
+    cell->weight = cell->val;
+    if(cell->isMine())
+        cell->partial.clear();
+    if(cell->isFree())
+    {
+        if(cell->isActive())
+            cell->setPartial();
+        else
+            cell->partial.clear();
+    
+        if(cell->neighborsType(UNKNOWN))
+            work.push_back(cell);
+    }
 }
 
 Solution Player::getSol()
-{/*
-    std::cout << "work: ";
-    for(auto it = work.begin(); it != work.end(); it++)
-    {
-        PlayerCell *cell = *it;
-        std::cout << "(" << getCoords(cell->id).first << ", " << getCoords(cell->id).second << ") ";
-    }
-    std::cout << "\n";*/
-
+{
     Solution sol;
     sol = solve(solveTrivial);
     if(sol.isValid())
@@ -86,7 +84,7 @@ Solution Player::solveTrivial(PlayerCell *cell)
             PlayerCell *nbr = (PlayerCell*)*i;
             if(nbr->isUnknown())
             {
-                return Solution(nbr->id, MINE);
+                return Solution(nbr->id, MINE, cell->id);
             }
         }
     }
@@ -110,9 +108,9 @@ Solution Player::solvePartial(PlayerCell *cell)
     if(!cell->partial.empty())
     {
         if(cell->weight == 0)
-            return Solution((*(cell->partial.begin()))->id, FREE);
+            return Solution((*(cell->partial.begin()))->id, FREE, cell->id);
         if(cell->weight == cell->partial.size())
-            return Solution((*(cell->partial.begin()))->id, MINE);
+            return Solution((*(cell->partial.begin()))->id, MINE, cell->id);
     }
     
 

@@ -9,7 +9,7 @@
 
 class Player: public Board<PlayerCell>
 {
-private:
+public:
     std::list<PlayerCell*> work;
 public:
     Player(size_t N, size_t M);
